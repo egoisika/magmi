@@ -97,4 +97,12 @@ static public function getCategory()
 	{
 		return "Input Data Preprocessing";
 	}
+	
+	static public function getCompatibleEngines()
+	{
+		return ".*";	
+	}
+	
+	
+	
 }
