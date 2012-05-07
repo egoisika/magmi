@@ -13,7 +13,7 @@
 		<div class="grid_12 col" id="chooseengine">
 			<form id='magmi_ce_form' method='post' action='magmi.php'>
 				<!--  <input type="hidden" name="PHPSESSID" value="<?php echo session_id()?>"> -->
-				<select id="magmi_choose_engine" name="engineclass"">
+				<select id="magmi_choose_engine" name="engineclass">
 				<?php foreach($elist as $k=>$inf){?>
 					<option value="<?php echo $k?>" <?php if($k==$engclass){?>selected="selected"<?php }	?>><?php echo $inf["name"]."-".$inf["version"]?></option>
 				<?php  }?>
