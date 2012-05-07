@@ -40,17 +40,17 @@ This plugin enables magmi import from csv files (using Dataflow format + magmi e
  </ul>
  <input type="checkbox" id="CSV_remoteauth" name="CSV:remoteauth" <?php  if($this->getParam("CSV:remoteauth",false)==true){?>checked="checked"<?php }?>>authentication needed
  <div id="remoteauth" <?php  if($this->getParam("CSV:remoteauth",false)==false){?>style="display:none"<?php }?>>
- 
+
  <div class="remoteuserpass">
  	<ul class="formline">
  		<li class="label">User</li>
  		<li class="value"><input type="text" name="CSV:remoteuser" id="CSV_remoteuser" value="<?php echo $this->getParam("CSV:remoteuser","")?>"></li>
- 		
- 	</ul> 
+
+ 	</ul>
  	<ul class="formline">
  		<li class="label">Password</li>
  		<li class="value"><input type="text" name="CSV:remotepass" id="CSV_remotepass" value="<?php echo $this->getParam("CSV:remotepass","")?>"></li>
- 	</ul> 
+ 	</ul>
  	</div>
 
 
@@ -81,7 +81,7 @@ $malformed=($hdline!="" && $hdline!=1)?>
 	{
 		if($('#CSV_remoteauth').attr('checked'))
 		{
-			$('#remoteauth').show();	
+			$('#remoteauth').show();
 		}
 		else
 		{
@@ -99,11 +99,11 @@ $malformed=($hdline!="" && $hdline!=1)?>
 				    engineclass:'<?php echo Magmi_PluginHelper::getInstance($this->getConfig()->getProfile())->getEngineClass()?>',
 				    'CSV:basedir':$('#CSV_basedir').val()})));
 	});
-				
+
 	$('#malformedcb').click(function(){
 		if($('#malformedcb').attr('checked'))
 		{
-			$('#malformed').show();	
+			$('#malformed').show();
 		}
 		else
 		{
@@ -135,5 +135,5 @@ $malformed=($hdline!="" && $hdline!=1)?>
 			});
 	$('#CSV_remoteauth').click(handle_auth);
 	$('#CSV_remoteurl').blur(handle_auth);
-	
+
 </script>

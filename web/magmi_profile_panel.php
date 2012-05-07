@@ -1,4 +1,4 @@
-<?php 
+<?php
 $engclass=getWebParam("engineclass");
 $profilename=($profile!="default"?$profile:"Default");
 require_once("magmi_pluginhelper.php");
@@ -14,7 +14,7 @@ $ph->setEngineClass($engclass);
 </script>
 <div class="container_12" id="profile_action">
 <div class="grid_12 subtitle"><span>Configure Current Profile (<?php echo $profilename?>)</span>
-<?php 
+<?php
 $eplconf=new EnabledPlugins_Config($ph->getEngine()->getProfilesDir(),$profile);
 $eplconf->load();
 $conf_ok=$eplconf->hasSection("PLUGINS_DATASOURCES");
@@ -25,7 +25,7 @@ Saved:<?php echo $eplconf->getLastSaved("%c")?>
 <?php }
 else{?>
 <?php echo $profilename?> Profile Config not saved yet
-<?php 
+<?php
 }?>
 </span>
 </div>
@@ -36,8 +36,8 @@ else{?>
 	<h3>Profile to configure</h3>
 	<ul class="formline">
 		<li class="label">Current Magmi Profile:</li>
-		<li class="value">	
-			
+		<li class="value">
+
 			<select name="profile" id="cp_profile">
 			<option <?php if(null==$profile){?>selected="selected"<?php }?> value="default">Default</option>
 			<?php foreach($profilelist as $profname){?>
@@ -49,13 +49,13 @@ else{?>
 	<ul class="formline">
 		<li class="label">Copy Selected Profile to:</li>
 		<li class="value"><input type="text" name="newprofile"></input></li>
-	
+
 	</ul>
 	<input id="cp_copyswitch" type="submit" value="Copy Profile &amp; switch"></input>
 	<?php
 	require_once("magmi_pluginhelper.php");
 	$order=array("datasources","general","itemprocessors");
-	
+
 	$plugins=$ph->getEnginePluginClasses();
 	$pcats=array();
 	foreach($plugins as $k=>$pclasslist)
@@ -96,11 +96,11 @@ else{?>
 			<?php $pinf=$plugins[$k];?>
 			<?php if(count($pinf)>0){?>
 			<div class="pluginselect" style="float:left">
-			
+
 			<select name="PLUGINS_DATASOURCES:class" class="pl_<?php echo $k?>">
-			
-			
-			<?php 
+
+
+			<?php
 			$sinst=null;
 			Magmi_PluginHelper::getInstance($profile)->setEngineClass($engclass);
 			foreach($pinf as $pclass)
@@ -108,7 +108,7 @@ else{?>
 				$pinst=Magmi_PluginHelper::getInstance($profile)->createInstance($k,$pclass);
 				if($sinst==null)
 				{
-					
+
 					$sinst=$pinst;
 				}
 				$pinfo=$pinst->getPluginInfo();
@@ -120,7 +120,7 @@ else{?>
 				<option value="<?php echo $pclass?>"<?php  if($sinst==$pinst){?>selected="selected"<?php }?>><?php echo $pinfo["name"]." v".$pinfo["version"]?></option>
 			<?php }
 			?>
-			
+
 			</select>
 			</div>
 			<?php if(isset($pinfo["url"])){?>
@@ -133,20 +133,20 @@ else{?>
 			</div>
 			<?php }else{
 						$conf_ok=0;
-				
+
 				?>
 			Magmi needs a datasource plugin, please install one
 			<?php }?>
-			<?php 
+			<?php
 		}
 		else
 		{
 			foreach($pcats as $pcat=>$pclasslist) {?>
-								
-				<?php 
+
+				<?php
 				$catopen=false;
 				$pinf=$plugins[$k];?>
-		
+
 				<?php foreach($pinf as $pclass)	{
 					if(!in_array($pclass,$pclasslist))
 					{
@@ -171,9 +171,9 @@ else{?>
 								<input type="checkbox" class="pl_<?php echo $k?>" name="<?php echo $pclass?>" <?php if($eplconf->isPluginEnabled($k,$pclass)){?>checked="checked"<?php }?>>
 							<?php } else {?>
 								<input type="checkbox" class="pl_<?php echo $k?>" name="<?php echo $pclass?>" disabled="disabled">
-							<?php }?>	
+							<?php }?>
 							<span class="pluginname"><?php echo $pinfo["name"]." v".$pinfo["version"];?></span>
-							</div>	
+							</div>
 							<div class="plugininfo">
 							<?php if($info!==null){?>
 								<span>info</span>
@@ -195,14 +195,14 @@ else{?>
 							<a href="<?php echo $pinfo["url"]?>" target="magmi_doc">documentation</a>
 							</div>
 							<?php }?>
-	
+
 							<div class="pluginconfpanel">
 							<?php if($enabled){echo $pinst->getOptionsPanel()->getHtml();}?>
 							</div>
 					</li>
 				</ul>
 			<?php }?>
-		<?php }?>	
+		<?php }?>
 		<?php if($catopen){?></div><?php }?>
 		<?php }}?>
 	</div>
@@ -219,7 +219,7 @@ else{?>
 		<div class="subtitle"><h3>Parameters changed</h3></div>
 
 	<div class="changedesc"><b>You changed parameters without saving profile , would you like to:</b></div>
-	
+
 	<ul>
 	<li>
 		<input type="radio" name="paramcr" value="saveprof">Save chosen Profile (<?php echo $profilename ?>) with current parameters
@@ -240,7 +240,7 @@ else{?>
 <div id="pluginschanged" style="display:none">
 	<div class="subtitle"><h3>Plugin selection changed</h3></div>
 	<div class="changedesc"><b>You changed selected plugins without saving profile , would you like to:</b></div>
-	
+
 	<ul>
 	<li>
 		<input type="radio" name="plugselcr" value="saveprof" checked="checked">Save chosen Profile (<?php echo $profilename ?>) with current parameters
@@ -267,7 +267,7 @@ initDefaultPanels();
 $('#saveprofile').click(function()
 								{
 									saveProfile(<?php echo $conf_ok?1:0 ?>,function(){$('#chooseprofile').submit();});
-									});	
+									});
 
 $('#runmagmi').submit(function(ev){
 
@@ -276,7 +276,7 @@ $('#runmagmi').submit(function(ev){
 	{
 		 $('overlaycontent').update($(ls.target));
 		 $$('#overlaycontent > div').each(function(el){el.show()});
-		 $('overlay').show();			
+		 $('overlay').show();
 		 ev.stop();
 	}
 	});

@@ -1,4 +1,4 @@
-	<?php 
+<?php
 	ini_set('magic_gpc_quotes',0);
 	$profile=getWebParam("profile",'default');
 	$engclass=getWebParam('engineclass','magmi_productimportengine:Magmi_ProductImportEngine');
@@ -9,10 +9,10 @@
 	?>
 	<script type="text/javascript">
 	var imp_params={engineclass:'<?php echo $engclass?>',logfile:'<?php echo $logfile?>'};
-	<?php 
+	<?php
 		foreach($wp as $k=>$v)
 		{
-			echo "imp_params['$k']='$v';\n";	
+			echo "imp_params['$k']='$v';\n";
 		}
 	?>
 	</script>
@@ -40,23 +40,23 @@
 	{
 		loaddiv(tdiv,'ajax_gettime.php',decodeURIComponent($.param({prefix:xprefix})),function(){$(tdiv).show()});
 	};
-	
+
 	endImport=function(t)
-	{		
+	{
 		updateTime('#endimport_div','Import Ended');
 		setProgress(100);
 		$('#cancel_button').hide();
 	};
-	
+
 	updateProgress=function()
 	{
 		loaddiv('#runlog','magmi_progress.php',imp_params);
 	}
-		
-	
+
+
 	startImport=function(imp_params)
 	{
-		
+
 		if(window._sr==null)
 		{
 			updateTime('#startimport_div','Import Started');
@@ -74,7 +74,7 @@
 													);
 		}
 	};
-	
+
 	setProgress=function(pc)
 	{
 		$('#import_current').css('width',''+pc+'%');
@@ -90,7 +90,7 @@
 			window._rq=null;
 		}
 		clearInterval(window.loop);
-		
+
 	};
 
 	if(imp_params.mode!==null)

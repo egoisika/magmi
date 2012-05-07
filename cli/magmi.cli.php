@@ -2,11 +2,11 @@
 
 /**
  * MAGENTO MASS IMPORTER CLI SCRIPT
- * 
+ *
  * version : 0.1
  * author : S.BRACQUEMONT aka dweeves
  * updated : 2010-08-02
- * 
+ *
  */
 
 require_once("../inc/magmi_defs.php");
@@ -40,7 +40,7 @@ class CLILogger
 	public function log($data,$type)
 	{
 		echo("$type:$data\n");
-	}	
+	}
 }
 
 function getEngineInstance($options)
@@ -62,14 +62,14 @@ function getEngineInstance($options)
 		require_once("../engines/$engine_name.php");
 		if(class_exists($engine_class))
 		{
-			$enginst=new $engine_class();				
+			$enginst=new $engine_class();
 		}
 	}
 	if($enginst==null)
 	{
 	 die("Invalid engine definition : ".$optname);
 	}*/
-	
+
 	return $enginst;
 }
 $importer=getEngineInstance($options);

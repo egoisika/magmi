@@ -7,7 +7,7 @@ class CustomerAdressProcessor extends Magmi_ItemProcessor
     protected $_attrinfo=array();
     protected $_caetype;
     protected $_countrycache=array();
-    
+
 	public function getPluginInfo()
     {
         return array(
@@ -16,7 +16,7 @@ class CustomerAdressProcessor extends Magmi_ItemProcessor
             "version" => "0.0.1",
         );
     }
-    
+
     public function initAdressAttrInfos($cols)
     {
     	$toscan=$cols;
@@ -27,10 +27,10 @@ class CustomerAdressProcessor extends Magmi_ItemProcessor
 			$qcolstr=$this->arr2values($toscan);
 
 			$tname=$this->tablename("eav_attribute");
-				
-				
+
+
 			$sql="SELECT `$tname`.* FROM `$tname` WHERE ($tname.attribute_code IN ($qcolstr)) AND (entity_type_id IN (".$this->arr2values($etypes)."))";
-				
+
 			$toscan=array_merge($toscan,array_values($etypes));
 			$result=$this->selectAll($sql,$toscan);
 
@@ -43,9 +43,9 @@ class CustomerAdressProcessor extends Magmi_ItemProcessor
 			unset($result);
 			$this->_attrinfo=array_merge($this->_attrinfo,$attrinfs);
 		}
-		
+
     }
-    
+
     public function getAddressAttrInfo($attcode)
     {
     	$attrinf=isset($this->_attrinfo[$attcode])?$this->_attrinfo[$attcode]:null;
@@ -66,7 +66,7 @@ class CustomerAdressProcessor extends Magmi_ItemProcessor
 		}
 		return $attrinf;
     }
-    
+
 	public function processColumnList(&$cols,$params=null)
 	{
 		$zcols=array_unique(array_merge($cols,array('billing_region_id','shipping_region_id',)));
@@ -120,10 +120,10 @@ class CustomerAdressProcessor extends Magmi_ItemProcessor
 					}
 				}
 			}
-			
-		}	
+
+		}
 	}
-	
+
 	public function createAdress($cid,$item,$addrtype)
 	{
 		$data=array();
@@ -134,7 +134,7 @@ class CustomerAdressProcessor extends Magmi_ItemProcessor
 		$this->updateAddress($cid,$item, $addrtype, $addrid);
 		return $addrid;
 	}
-	
+
 	public function setDefaultAdress($addrid,$addrtype,$cid)
 	{
 		$custeid=$this->getEntityTypeId('customer');
@@ -149,8 +149,8 @@ class CustomerAdressProcessor extends Magmi_ItemProcessor
 		$sql="INSERT INTO ".$this->tablename('customer_entity_int')." (entity_type_id,attribute_id,entity_id,value) VALUES (".$this->arr2values($data).")
 		ON DUPLICATE KEY UPDATE value=values(value)";
 		$this->insert($sql,$data);
-		
-		
+
+
 	}
 	public function getCountryId($item,$country)
 	{
@@ -167,7 +167,7 @@ class CustomerAdressProcessor extends Magmi_ItemProcessor
 		}
 		return $countryid;
 	}
-	
+
 	public function getRegionId($item,$region,$country_id)
 	{
 		if(!isset($this->_regids[$region]))
@@ -182,7 +182,7 @@ class CustomerAdressProcessor extends Magmi_ItemProcessor
 		}
 		return $this->_regids[$region];
 	}
-	
+
 	public function updateAddress($cid,&$item,$addrtype,$addrid)
 	{
 		//handle aggregates
@@ -234,13 +234,13 @@ class CustomerAdressProcessor extends Magmi_ItemProcessor
 				$ins[]=$item[$itematt];
 				$ins_v[]='(?,?,?,?)';
 			}
-			
+
 			$sql="INSERT INTO $tname (entity_type_id,attribute_id,entity_id,value) VALUES ".implode(',',$ins_v)."
 			ON DUPLICATE KEY UPDATE value=values(value)";
 			$this->insert($sql,$ins);
-		}		
+		}
 	}
-	
+
 	public function getDefinedAdressTypes($item)
 	{
 		$akeys=array();
@@ -253,15 +253,15 @@ class CustomerAdressProcessor extends Magmi_ItemProcessor
 			$akeys[]='shipping';
 		}
 		return $akeys;
-		
+
 	}
-	
+
 	public function removeemptyCols(&$item,$addrtype)
 	{
 		$akeys=$this->getDefinedAdressTypes($item);
 		$ovcols=array('prefix','firstname','middlename','lastname');
 		foreach($ovcols as $col)
-		{		
+		{
 			$acol=$addrtype."_$col";
 			if(isset($item[$acol]) && trim($item[$acol])=='')
 			{
@@ -270,7 +270,7 @@ class CustomerAdressProcessor extends Magmi_ItemProcessor
 			$item[$acol]=$item[$col];
 		}
 	}
-	
+
 	public function createAdresses(&$item,$cid)
 	{
 		$akeys=$this->getDefinedAdressTypes($item);
@@ -279,7 +279,7 @@ class CustomerAdressProcessor extends Magmi_ItemProcessor
 			if(count($this->_addrcols[$addrtype])>0)
 			{
 				$this->removeemptyCols($item,$addrtype);
-				
+
 				$addrid=$this->findAddressId($cid,$item, 'default_'.$addrtype);
 				if($addrid==null)
 				{
@@ -287,7 +287,7 @@ class CustomerAdressProcessor extends Magmi_ItemProcessor
 					$this->setDefaultAdress($addrid, $addrtype, $cid);
 					//if one adress only is defined
 					//set it as default for other address type
-				
+
 				}
 				else
 				{
@@ -298,37 +298,37 @@ class CustomerAdressProcessor extends Magmi_ItemProcessor
 				{
 					if($addrtype=='billing')
 					{
-						$this->setDefaultAdress($addrid, 'shipping', $cid);	
+						$this->setDefaultAdress($addrid, 'shipping', $cid);
 					}
 					if($addrtype=='shipping')
 					{
-						$this->setDefaultAdress($addrid, 'billing', $cid);	
+						$this->setDefaultAdress($addrid, 'billing', $cid);
 					}
 				}
 			}
 		}
 	}
-	
+
 	static public function getCompatibleEngines()
 	{
-		return "Magmi_CustomerImportEngine";	
+		return "Magmi_CustomerImportEngine";
 	}
-	
+
 	public function processItemAfterId(&$item,$params=null)
 	{
 		$cid=$params['customer_id'];
 		$this->createAdresses($item,$cid);
 	}
-	
+
     public function findAddressId($cid,$item,$attcode)
 	{
 		$sql="SELECT cae.entity_id FROM ".$this->tablename('customer_address_entity')." as cae
 			  JOIN ".$this->tablename('eav_entity_type')." as eat ON  eat.entity_type_code='customer'
 			  JOIN ".$this->tablename('eav_attribute')." as ea ON ea.attribute_code=? AND ea.entity_type_id=eat.entity_type_id
               JOIN ".$this->tablename('customer_entity')." as ce ON ce.entity_id=cae.parent_id AND ce.entity_id=?
-              JOIN ".$this->tablename('customer_entity_int')." as cei ON cei.attribute_id=ea.attribute_id 
+              JOIN ".$this->tablename('customer_entity_int')." as cei ON cei.attribute_id=ea.attribute_id
               AND cei.entity_id=ce.entity_id AND cei.value=cae.entity_id";
-		
+
 		$addrid=$this->selectone($sql,array($attcode,$cid),'entity_id');
 		return $addrid;
 	}

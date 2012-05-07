@@ -27,7 +27,7 @@ function initSession()
 			$_SESSION=array();
 		}
 	}
-	
+
 }
 
 
@@ -47,16 +47,16 @@ function setEngineAndProfile($ph,$engclass,$profile)
 			$profile=null;
 		}
 		$ph=Magmi_PluginHelper::getInstance($profile);
-		$ph->setEngineClass($engclass);	
+		$ph->setEngineClass($engclass);
 	}
-	
+
 }
 
 function getWebParam($name,$default=null)
 {
 	initSession();
 	$out=isset($_REQUEST[$name])?$_REQUEST[$name]:(isset($_SESSION[$name])?$_SESSION[$name]:$default);
-	return $out;		
+	return $out;
 }
 
 function getWebParams()

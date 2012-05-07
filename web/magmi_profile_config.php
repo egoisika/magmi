@@ -1,4 +1,4 @@
-<?php 
+<?php
 require_once("magmi_config.php");
 require_once("magmi_pluginhelper.php");
 $engclass=getWebParam("engineclass");

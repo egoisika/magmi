@@ -16,7 +16,7 @@ if(file_exists($logfile))
 	$parser=new DefaultProgressParser();
 	$parser->setFile($logfile);
 	$parser->parse();
-		
+
 	$count=$parser->getData("itime:count");
 	if($count)
 	{
@@ -40,8 +40,8 @@ else
 {
 	die("NO FILE");
 }
-?>	
-		
+?>
+
 <div class="col"><h3>Plugins</h3>
 <?php foreach($parser->getData("plugins") as $pinfo):?>
 	<div class="log_standard"><?php echo $pinfo["name"]?> (<?php echo $pinfo["ver"]?>) by <?php echo $pinfo["auth"]?></div>
@@ -49,7 +49,7 @@ else
 </div>
 
 <div class="col"><h3>Startup</h3>
-		
+
 <?php foreach($parser->getData("startup") as $sinfo):?>
 <div class="log_standard"><?php echo $sinfo?></div>
 <?php endforeach?>
@@ -68,7 +68,7 @@ else
 					<td>Recs/min</td>
 					<td>Attrs/min</td>
 					<td>Last <?php echo $step?></td>
-				</tr>	
+				</tr>
 				</thead>
 				<tbody>
 				<tr>
@@ -93,7 +93,7 @@ else
 					<td>Speed</td>
 					<td>Avg Reqs</td>
 					<td>Efficiency</td>
-					<td>Last <?php echo $step?></td>				
+					<td>Last <?php echo $step?></td>
 			</tr>
 			</thead>
 			<tbody>
@@ -108,7 +108,7 @@ else
 			</tbody>
 		</table>
 	</div>
-	</div>	
+	</div>
 <?php endif?>
 
 <?php foreach(array("error","warning") as $gtype):
@@ -133,9 +133,9 @@ else
 	</div>
 	</div>
 <?php endif?>
-	
-	
-<?php 
+
+
+<?php
 	$skipped=$parser->getData("skipped");
 	if(!is_array($skipped) && $skipped>0):?>
 	<div class='log_info'>Skipped <?php echo $parser->getData("skipped")?> records</div>
@@ -147,7 +147,7 @@ else
 	<span><a href='magmi.php'>Back to Configuration Page</a></span>
 	</div>
 	<script type="text/javascript">endImport();</script>
-<?php else:?>	
+<?php else:?>
 	<?php if($parser->getData("ended")):?>
 		<div class='log_end <?php if(count($parser->getData("error"))>0){?> log_error<?php }?>'>
 		<form method="post" id="backform" action="magmi.php">
@@ -159,7 +159,7 @@ else
 		<script type="text/javascript">
 			$('#backlink').click(function(){$('#backform').submit()});
 		endImport();
-	
+
 		</script>
 	<?php endif?>
 <?php endif?>
