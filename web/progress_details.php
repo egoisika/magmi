@@ -35,7 +35,7 @@ require_once ("magmi_web_utils.php");
  <li>
  <?php if($errnum!=null){
  	?>
- 		<a name="trace_<?php echo $errnum?>" href="#trace_<?php echo $errnum?>" onclick="showtrace('<?php echo $errnum?>')"><?php echo $errnum?></a>
+ 		<a id="trace_<?php echo $errnum?>" href="#trace_<?php echo $errnum?>" onclick="showtrace('<?php echo $errnum?>')"><?php echo $errnum?></a>
  	<?php
  }?><span><?php echo $xdata?></span>
  <?php if($errnum!=null){?>
