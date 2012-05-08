@@ -17,7 +17,7 @@
  		<div class="license">
  		Released under <a href="javascript:;">MIT OSL License
  		<span class="hover">
- 		<?php echo nl2br(file_get_contents("../inc/license.txt"))?>
+ 		<?php echo nl2br(file_get_contents("../LICENSE"))?>
  		</span>
  		</a>
  		</div>
