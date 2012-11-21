@@ -42,7 +42,7 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
 	
     public function getPluginUrl()
     {
-        return 'http://sourceforge.net/apps/mediawiki/magmi/index.php?title=Grouped_Item_processor';
+        return $this->pluginDocUrl('Grouped_Item_processor');
     }
 
     public function getPluginVersion()
@@ -83,7 +83,7 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
             WHERE product_id=?";
         $this->delete($sql, array($pid));
         //recreate associations
-        $sql = "INSERT INTO $cpsl (`parent_id`,`product_id`) 
+        $sql = "INSERT INTO $cpsl (`parent_id`,`product_id`)
         	SELECT cpec.entity_id as parent_id,cpes.entity_id  as product_id
             FROM $cpe as cpec
             JOIN $cpe as cpes ON cpes.sku $cond
@@ -94,13 +94,13 @@ class Magmi_GroupedItemProcessor extends Magmi_ItemProcessor
        		 $sql = "select link_type_id from $cplt where code=?";
        	 	 $this->_linktype = $this->selectone($sql, 'super', 'link_type_id');
         }
-        $sql = "INSERT INTO $cpl (`product_id`,`linked_product_id`, `link_type_id`) 
+        $sql = "INSERT INTO $cpl (`product_id`,`linked_product_id`, `link_type_id`)
         	SELECT cpec.entity_id as parent_id,cpes.entity_id  as product_id, ?
             FROM $cpe as cpec
             JOIN $cpe as cpes ON cpes.sku $cond
             WHERE cpec.entity_id=?";
         $this->insert($sql, array_merge(array($this->_linktype),$conddata, array($pid)));
-        $sql = "INSERT INTO $cpr (`parent_id`,`child_id`) 
+        $sql = "INSERT INTO $cpr (`parent_id`,`child_id`)
         	SELECT cpec.entity_id as parent_id,cpes.entity_id  as child_id
             FROM $cpe as cpec
             JOIN $cpe as cpes ON cpes.sku $cond

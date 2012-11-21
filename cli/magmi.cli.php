@@ -9,7 +9,7 @@
  *
  */
 
-require_once("../inc/magmi_defs.php");
+require_once(dirname(dirname(__FILE__))."/inc/magmi_defs.php");
 
 $script=array_shift($argv);
 $options=array();
@@ -70,6 +70,7 @@ function getEngineInstance($options)
 	return $enginst;
 }
 $importer=getEngineInstance($options);
-$importer->setLogger(new CLILogger());
+$loggerclass=isset($options['logger'])?$options['logger']:"CLILogger";
+$importer->setLogger(new $loggerclass());
 $importer->run($options);
 ?>

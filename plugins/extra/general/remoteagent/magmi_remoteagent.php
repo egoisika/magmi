@@ -1,4 +1,9 @@
 <?php
+//REMOTE AGENT IS A HTTP API ENABLING REMOTE FILE SAVING AND OTHER EXECUTION PROXYING
+//THIS IS USING A SINGLE BIG FILE ON PURPOSE , MAYBE LATER MORE COMPLEX STRUCTURE WILL BE USED
+
+namespace MRA;
+
 class FSHelper
 {
 	 public static function isDirWritable($dir)
@@ -27,15 +32,16 @@ class MagentoDirHandlerFactory
 
 	public function __construct()
 	{
+		$this->_handlers['LocalMagentoDirHandler']=NULL;
 	}
 
 	public static function getInstance()
 	{
-		if(!isset(self::$_instance))
+		if(!isset($_instance))
 		{
-			self::$_instance=new MagentoDirHandlerFactory();
+			$_instance=new MagentoDirHandlerFactory();
 		}
-		return self::$_instance;
+		return $_instance;
 	}
 
 	public function registerHandler($obj)
@@ -51,8 +57,13 @@ class MagentoDirHandlerFactory
 	{
 		foreach($this->_handlers as $cls=>$handler)
 		{
-			if ($handler->canHandle($url))
+			if ($cls::canHandle($url))
 			{
+				if(!isset($this->_handlers[$cls]))
+				{
+					$handler=new $cls($url);
+				}
+
 				return $handler;
 			}
 		}
@@ -64,12 +75,12 @@ class MagentoDirHandlerFactory
 abstract class RemoteFileGetter
 {
 	protected $_errors;
-	public abstract function urlExists($url);
-	public abstract function copyRemoteFile($url,$dest);
-	public function getErrors()
-	{
-		return $this->_errors;
-	}
+ 	public abstract function urlExists($url);
+ 	public abstract function copyRemoteFile($url,$dest);
+ 	public function getErrors()
+ 	{
+ 		return $this->_errors;
+ 	}
 }
 
 class CURL_RemoteFileGetter extends RemoteFileGetter
@@ -214,12 +225,12 @@ abstract class MagentoDirHandler
 {
 	protected $_magdir;
 	protected $_lasterror;
-	public function __construct($magurl)
+	public function construct($magurl)
 	{
 		$this->_magdir=$magurl;
 		$this->_lasterror=array();
 	}
-	public abstract function canhandle($url);
+	public static function canhandle($url){return false;}
 	public abstract function file_exists($filepath);
 	public abstract function mkdir($path);
 	public abstract function copy($srcpath,$destpath);
@@ -230,11 +241,11 @@ class LocalMagentoDirHandler extends MagentoDirHandler
 {
 	public function __construct($magdir)
 	{
-		parent::__construct($magdir);
+		parent::construct($magdir);
 		MagentoDirHandlerFactory::getInstance()->registerHandler($this);
 	}
 
-	public function canHandle($url)
+	public static function canHandle($url)
 	{
 		return (preg_match("|^.*?://.*$|",$url)==false);
 	}
@@ -246,7 +257,7 @@ class LocalMagentoDirHandler extends MagentoDirHandler
 		return file_exists($mp);
 	}
 
-	public function mkdir($path,$mask=null)
+	public function mkdir($path,$mask=null,$rec=false)
 	{
 		$mp=str_replace("//","/",$this->_magdir."/".str_replace($this->_magdir, '', $path));
 
@@ -254,13 +265,15 @@ class LocalMagentoDirHandler extends MagentoDirHandler
 		{
 			$mask=octdec('755');
 		}
-		$ok=@mkdir($mp,$mask);
+		$ok=@mkdir($mp,$mask,$rec);
 		if(!$ok)
 		{
 			$this->_lasterror=error_get_last();
 		}
 		return $ok;
 	}
+
+
 
 	public function getLastError()
 	{
@@ -295,7 +308,9 @@ class LocalMagentoDirHandler extends MagentoDirHandler
 		}
 		else
 		{
-			$result=@copy($srcpath,$destpath);
+			$mps=str_replace("//","/",$this->_magdir."/".str_replace($this->_magdir, '', $srcpath));
+			$mpd=str_replace("//","/",$this->_magdir."/".str_replace($this->_magdir, '', $destpath));
+			$result=@copy($mps,$mpd);
 			if(!$result)
 			{
 				$this->_lasterror=error_get_last();
@@ -303,4 +318,162 @@ class LocalMagentoDirHandler extends MagentoDirHandler
 		}
 		return $result;
 	}
+}
+
+
+class Magmi_RemoteAgent
+{
+	private static $_instance;
+	private $_mdh;
+	private $_lasterror;
+
+	public static $apidesc=array(
+	"getVersion"=>NULL,
+	"copy"=>array("src","dest"),
+	"mkdir"=>array("path","mask"),
+	"unlink"=>array("path"),
+	"file_exists"=>array("path"));
+
+	public function __construct()
+	{
+		$this->_mdh=new LocalMagentoDirHandler(dirname(__FILE__));
+	}
+
+	public static function getStaticVersion()
+	{
+		return "1.0.1";
+	}
+
+	public function wrapResult($res)
+	{
+		if($this->_lasterror==NULL)
+		{
+			return array("result"=>$res);
+		}
+		else
+		{
+			return array("error"=>$this->getLastError());
+		}
+	}
+	public function getVersion()
+	{
+		return $this->wrapResult(array("version"=>self::getStaticVersion()));
+	}
+
+	public static function checkParams($params,$api)
+	{
+		$missing=array();
+		$plist=Magmi_RemoteAgent::$apidesc[$api];
+		for($i=0;$i<count($plist);$i++)
+		{
+			if(!isset($params[$plist[$i]]))
+			{
+				$missing[]=$plist[$i];
+			}
+		}
+		return $missing;
+	}
+
+	public function getLastError()
+	{
+		$err=$this->_lasterror;
+		$this->_lasterror=NULL;
+		return $err;
+	}
+
+	public function copy($params)
+	{
+		$ok=$this->_mdh->copy($params['src'],$params['dest']);
+		if(!$ok)
+		{
+			$this->_lasterror=$this->_mdh->getLastError();
+		}
+		return $this->wrapResult($ok);
+	}
+
+	public function file_exists($params)
+	{
+		$ok=$this->_mdh->file_exists($params['path']);
+		return $this->wrapResult($ok);
+	}
+
+	public function mkdir($params)
+	{
+		$rec=isset($params['rec']);
+		$ok=$this->_mdh->mkdir($params['path'],$params['mask'],$rec);
+		if(!$ok)
+		{
+			$this->_lasterror=$this->_mdh->getLastError();
+		}
+		return $this->wrapResult($ok);
+	}
+
+	public function unlink($params)
+	{
+		$ok=$this->_mdh->unlink($params['path']);
+		if(!$ok)
+		{
+			$this->_lasterror=$this->_mdh->getLastError();
+		}
+		return $this->wrapResult($ok);
+	}
+
+	public static function getInstance()
+	{
+		if(!isset(self::$_instance))
+		{
+			self::$_instance=new Magmi_RemoteAgent();
+		}
+		return self::$_instance;
+	}
+
+}
+
+
+
+function sendResponse($calltype,$result)
+{
+	header("Content-type: application/json");
+	echo json_encode(array($calltype=>$result));
+}
+
+function buildError($errname,$errdata)
+{
+	return array("error"=>array($errname,$errdata));
+}
+
+if(!class_exists('Magmi_Plugin'))
+{
+
+if(!isset($_REQUEST['api']))
+{
+	header('Status 406 : Unauthorized call',true,406);
+	exit();
+}
+
+$api=$_REQUEST['api'];
+
+
+if(!in_array($api, array_keys(Magmi_RemoteAgent::$apidesc)))
+{
+	header('Status 406 : Unauthorized call',true,406);
+	exit();
+}
+
+$missing=Magmi_RemoteAgent::checkParams($_REQUEST,$api);
+if(count($missing)>0)
+{
+	header('Status 400 : Invalid parameters',true,400);
+	$error=buildError("missing mandatory parameters",implode(",",$missing));
+	sendResponse($api,$error);
+}
+else {
+	$mra=Magmi_RemoteAgent::getInstance();
+	$result=$mra->$api($_REQUEST);
+	if(isset($result["error"]))
+	{
+		header('Status 500 : API error',true,	500);
+	}
+	sendResponse($api,$result);
+}
 }
