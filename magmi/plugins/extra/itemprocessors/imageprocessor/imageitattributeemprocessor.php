@@ -52,7 +52,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 		}
 		//use ";" as image separator
 		$images=explode(";",$ivalue);
-		
+		$imageindex=0;
 		//for each image
 		foreach($images as $imagefile)
 		{
@@ -69,13 +69,14 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 			}
 			unset($infolist);
 			//copy it from source dir to product media dir
-			$imagefile=$this->copyImageFile($imagefile,$item,array("store"=>$storeid,"attr_code"=>$attrcode));
+			$imagefile=$this->copyImageFile($imagefile,$item,array("store"=>$storeid,"attr_code"=>$attrcode,"imageindex"=>$imageindex==0?"":$imageindex));
 			if($imagefile!==false)
 			{
 				//add to gallery
 				$targetsids=$this->getStoreIdsForStoreScope($item["store"]);
 				$vid=$this->addImageToGallery($pid,$storeid,$attrdesc,$imagefile,$targetsids,$label,$exclude);
 			}
+			$imageindex++;
 		}
 		unset($images);
 		//we don't want to insert after that
@@ -119,19 +120,20 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 			return $ivalue;
 		}
 		
-		$imgfile=NULL;
-		$bi=basename($ivalue);
-		
-		if($ivalue[0]=="/" && substr($ivalue, 1)==$bi)
-		{
-			$ivalue=$bi;
-		}
-		//we have an image name with / before
+		//ok , so it's a relative path
+		$imgfile=false;
 		$scandirs=explode(";",$this->getParam("IMG:sourcedir"));
-		$found=false;
-		for($i=0;$i<count($scandirs) && !$imgfile;$i++)
+		
+		//iterate on image sourcedirs, trying to resolve file name based on input value and current source dir
+		for($i=0;$i<count($scandirs) && $imgfile===false;$i++)
 		{
-			$imgfile=abspath($ivalue,$scandirs[$i]);
+			$sd=$scandirs[$i];
+			//scandir is relative, use mdh
+			if($sd[0]!="/")
+			{
+				$sd=$this->_mdh->getMagentoDir()."/".$sd;
+			}
+			$imgfile=abspath($ivalue,$sd);
 		}
 		return $imgfile;
 	}
