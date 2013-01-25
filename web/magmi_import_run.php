@@ -1,4 +1,4 @@
-	<?php
+<?php
 	ini_set('magic_gpc_quotes',0);
 	$profile=getWebParam("profile",'default');
 	$engclass=getWebParam('engineclass','magmi_productimportengine:Magmi_ProductImportEngine');
