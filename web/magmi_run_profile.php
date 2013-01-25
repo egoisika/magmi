@@ -1,4 +1,4 @@
-<?php 
+<?php
 require_once("magmi_pluginhelper.php");
 if(!isset($profile))
 {
@@ -28,7 +28,7 @@ if(!$eplconf->hasSection("PLUGINS_DATASOURCES"))
 	<input type="hidden" name="logfile" value="<?php echo Magmi_StateManager::getProgressFile()?>"></input>
 	<input type="hidden" name="engineclass" value="<?php echo $engclass?>"></input>
 	<div class="container_12">
-		<div class="grid_12 col" id="directrun">	
+		<div class="grid_12 col" id="directrun">
 			<h3>Directly run magmi with existing profile</h3>
 			<div class="formline">
 				<span class="label">Run Magmi With Profile:</span>

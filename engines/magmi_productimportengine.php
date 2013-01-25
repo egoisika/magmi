@@ -88,7 +88,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 	{
 		return "product_profiles";
 	}
-	
+
 
 	public function initProdType()
 	{
@@ -135,7 +135,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 			$wscarr=csl2arr($scodes);
 			$qcolstr=$this->arr2values($wscarr);
 			$cs=$this->tablename("core_store");
-			$sql="SELECT csdep.store_id FROM $cs as csmain 
+			$sql="SELECT csdep.store_id FROM $cs as csmain
 				 JOIN $cs as csdep ON csdep.website_id=csmain.website_id
 				 WHERE csmain.code IN ($qcolstr) ";
 			$sidrows=$this->selectAll($sql,$wscarr);
@@ -249,7 +249,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 				//SQL for selecting attribute properties for all wanted attributes
 				$sql="SELECT `$tname`.*,$extra.is_global FROM `$tname`
 				LEFT JOIN $extra ON $tname.attribute_id=$extra.attribute_id
-				WHERE  ($tname.attribute_code IN ($qcolstr)) AND (entity_type_id=?)";		
+				WHERE  ($tname.attribute_code IN ($qcolstr)) AND (entity_type_id=?)";
 			}
 			else
 			{
@@ -835,8 +835,8 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 		//new auto synchro on lat inserted stock item values for stock status.
 		//also works for multiple stock ids.
 		$sql="INSERT INTO `$css` SELECT csit.product_id,ws.website_id,cis.stock_id,csit.qty,? as stock_status
-				FROM `$csit` as csit 
-				JOIN ".$this->tablename("core_website")." as ws ON ws.website_id IN (".$this->arr2values($wsids).") 
+				FROM `$csit` as csit
+				JOIN ".$this->tablename("core_website")." as ws ON ws.website_id IN (".$this->arr2values($wsids).")
 				JOIN ".$this->tablename("cataloginventory_stock")." as cis ON cis.stock_id=?
 				WHERE product_id=?
 				ON DUPLICATE KEY UPDATE stock_status=VALUES(`stock_status`),qty=VALUES(`qty`)";
@@ -915,7 +915,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 	public function getItemWebsites($item,$default=false)
 	{
 		$k=$item["store"];
-		
+
 		if(!isset($this->_wsids[$k]))
 		{
 				$this->_wsids[$k]=array();
@@ -936,7 +936,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 				}
 			}
 			return $this->_wsids[$k];
-	
+
 	}
 
 	/**
@@ -986,7 +986,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 		$this->_same=true;
 	}
 
-	
+
 	public function getItemIds($item)
 	{
 		$sku=$item["sku"];
@@ -1004,7 +1004,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 				//only sku & attribute set id from datasource otherwise.
 				$this->_curitemids=array("pid"=>null,"sku"=>$sku,"asid"=>isset($item["attribute_set"])?$this->getAttributeSetId($item["attribute_set"]):null);
 			}
-			//do not reset values for existing if non admin	
+			//do not reset values for existing if non admin
 			$this->onNewSku($sku,($cids!==false));
 			unset($cids);
 		}
@@ -1115,7 +1115,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 		if(!isset($item["sku"]) || trim($item["sku"])=='')
 		{
 			$this->log('No sku info found for record #'.$this->_current_row,"error");
-			return false;	
+			return false;
 		}
 		//handle "computed" ignored columns
 		$this->handleIgnore($item);
@@ -1263,7 +1263,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 	{
 		return $this->prod_etype;
 	}
-	
+
 	public function getCurrentRow()
 	{
 		return $this->_current_row;
@@ -1330,7 +1330,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 	{
 		$this->handleIgnore($item);
 	}
-	
+
 	public function exitImport()
 	{
 		$this->callPlugins("datasources,general,itemprocessors","endImport");
@@ -1345,7 +1345,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 			$this->_skustats["nsku"]++;
 			if($res["ok"])
 			{
-				$this->_skustats["ok"]++;	
+				$this->_skustats["ok"]++;
 			}
 			else
 			{
@@ -1405,10 +1405,10 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 			unset($item);
 			$res["last"]=1;
 		}
-		
+
 		unset($item);
 		$this->updateSkuStats($res);
-		
+
 		return $res;
 
 	}
@@ -1417,8 +1417,8 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 	{
 		 $this->_skustats=array("nsku"=>0,"ok"=>0,"ko"=>0);
 	}
-	
-	
+
+
 	public function engineRun($params,$forcebuiltin=array())
 	{
 		$this->log("Import Mode:$this->mode","startup");
@@ -1482,7 +1482,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 			$this->log("No Records returned by datasource","warning");
 		}
 		$this->callPlugins("datasources,general,itemprocessors","afterImport");
-		
+
 		$this->log("Import Ended","end");
 		Magmi_StateManager::setState("idle");
 	}

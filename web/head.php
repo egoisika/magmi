@@ -5,8 +5,8 @@
 	require_once("magmi_version.php");
 	require_once('magmi_web_utils.php');
 	initSession();
-	
- 
+
+
 ?>
 <html>
 <head>

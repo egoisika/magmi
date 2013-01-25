@@ -104,10 +104,10 @@ class Magmi_CustomerImportEngine extends Magmi_Engine
 
 	public function getEntityTypeId($name)
 	{
-		
+
 		return isset($this->_etypes[$name])?$this->_etypes[$name]:0;
 	}
-	
+
 	public function initEntityTypes()
 	{
 		$tname=$this->tablename("eav_entity_type");
@@ -240,7 +240,7 @@ class Magmi_CustomerImportEngine extends Magmi_Engine
 	 */
 	public function initAttrInfos($cols,$etypes=null)
 	{
-		
+
 		if($etypes==null && count($this->_etypes)==0)
 		{
 			$this->initEntityTypes();
@@ -261,10 +261,10 @@ class Magmi_CustomerImportEngine extends Magmi_Engine
 			$qcolstr=$this->arr2values($toscan);
 
 			$tname=$this->tablename("eav_attribute");
-				
-				
+
+
 			$sql="SELECT `$tname`.* FROM `$tname` WHERE ($tname.attribute_code IN ($qcolstr)) AND (entity_type_id IN (".$this->arr2values($etypes)."))";
-				
+
 			$toscan=array_merge($toscan,array_values($etypes));
 			$result=$this->selectAll($sql,$toscan);
 
@@ -296,7 +296,7 @@ class Magmi_CustomerImportEngine extends Magmi_Engine
 					}
 					$this->attrbytype[$bt]["data"][]=$a;
 				}
-			}	
+			}
 			//now add a fast index in the attrbytype array to store id list in a comma separated form
 			foreach($this->attrbytype as $bt=>$test)
 			{
@@ -335,7 +335,7 @@ class Magmi_CustomerImportEngine extends Magmi_Engine
 	 */
 	public function getAttrInfo($attcode,$lookup=true,$etid=null)
 	{
-				
+
 		$attrinf=isset($this->attrinfo[$attcode])?$this->attrinfo[$attcode]:null;
 		if($attrinf==null && $lookup)
 		{
@@ -387,7 +387,7 @@ class Magmi_CustomerImportEngine extends Magmi_Engine
 			else
 			{
 				$sql="SELECT website_id FROM ".$this->tablename('core_website')." WHERE website_id!=0 AND is_default=1 LIMIT 1";
-				
+
 			}
 			$result=$this->selectOne($sql,$wscodes,"website_id");
 			if($result==null)
@@ -576,7 +576,7 @@ class Magmi_CustomerImportEngine extends Magmi_Engine
 				}
 
 			}
-				
+
 
 
 
@@ -752,7 +752,7 @@ class Magmi_CustomerImportEngine extends Magmi_Engine
 		else
 		{
 			$this->updateCustomer($item,$cid);
-				
+
 		}
 		try
 		{
@@ -770,7 +770,7 @@ class Magmi_CustomerImportEngine extends Magmi_Engine
 			//handle "computed" ignored columns from afterImport
 			$this->handleIgnore($item);
 
-				
+
 			//create new ones
 			$attrmap=$this->attrbytype;
 			do
@@ -780,7 +780,7 @@ class Magmi_CustomerImportEngine extends Magmi_Engine
 			while(count($attrmap)>0);
 
 
-				
+
 
 			$this->touchCustomer($cid);
 			//ok,we're done

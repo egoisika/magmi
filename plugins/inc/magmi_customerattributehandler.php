@@ -5,12 +5,12 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 	protected $_baseattrs=array("status"=>1,"visibility"=>4,"page_layout"=>"");
 	protected $_missingcols=array();
 	protected $_missingattrs=array();
-	
+
 	public function initialize($params)
 	{
-		$this->registerAttributeHandler($this,array("attribute_code:.*"));	
+		$this->registerAttributeHandler($this,array("attribute_code:.*"));
 	}
-	
+
 	public function getPluginInfo()
 	{
 		return array(
@@ -19,14 +19,14 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
             "version" => "1.0.0"
             );
 	}
-	
+
 	public function processColumnList(&$cols)
 	{
 		$this->_missingcols=array_diff(array_keys($this->_basecols),$cols);
 		$this->_missingattrs=array_diff(array_keys($this->_baseattrs),$cols);
 		$cols=array_merge($cols,$this->_missingcols,$this->_missingattrs);
 	}
-	
+
 	public function initializeBaseCols(&$item)
 	{
 		foreach($this->_missingcols as $missing)
@@ -34,7 +34,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 			$item[$missing]=$this->_basecols[$missing];
 		}
 	}
-	
+
 	public function initializeBaseAttrs(&$item)
 	{
 		foreach($this->_missingattrs as $missing)
@@ -42,7 +42,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 			$item[$missing]=$this->_baseattrs[$missing];
 		}
 	}
-	
+
 	public function processItemBeforeId(&$item,$params=null)
 	{
 		$this->initializeBaseCols($item);
@@ -57,7 +57,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 		}
 		return true;
 	}
-	
+
 	/**
 	 * attribute handler for decimal attributes
 	 * @param int $pid	: product id
@@ -96,9 +96,9 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 	public function handleTextAttribute($pid,&$item,$attrcode,$attrdesc,$ivalue)
 	{
 		$ovalue=(empty($ivalue)?'':$ivalue);
-		return $ovalue;	
+		return $ovalue;
 	}
-	
+
 	public function checkInt($value)
 	{
 		return is_int($value) || (is_string($value) && is_numeric($value) && (int)$value==$value);
@@ -154,9 +154,9 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 	}
 
 
-	
-	
-	
+
+
+
 	/**
 	 * attribute handler for varchar based attributes
 	 * @param int $pid : product id
@@ -174,10 +174,10 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 		{
 			return "__MAGMI_DELETE__";
 		}
-		
-		
-		
-		
+
+
+
+
 		$ovalue=$ivalue;
 		$attid=$attrdesc["attribute_id"];
 		//--- Contribution From mennos , optimized by dweeves ----
