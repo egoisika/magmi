@@ -15,7 +15,7 @@ class ValueReplacerItemProcessor extends Magmi_ItemProcessor
         return array(
             "name" => "Value Replacer",
             "author" => "Dweeves",
-            "version" => "0.0.7a",
+            "version" => "0.0.8a",
 					 "url"=>$this->pluginDocUrl("Value_Replacer")
         );
     }
@@ -100,6 +100,8 @@ class ValueReplacerItemProcessor extends Magmi_ItemProcessor
 				if($match!=$matches[0])
 				{
 					$code=trim($match);
+					//settiing meta values
+					$meta=$params;
 					$rep=eval("return ($code);");
 					//escape potential "{{xxx}}" values in interpreted target
 					//so that they won't be reparsed in next round
@@ -161,7 +163,17 @@ class ValueReplacerItemProcessor extends Magmi_ItemProcessor
 		}
 		return true;
 	}
-
+	
+	public function initHelpers()
+	{
+		$helperdir=dirname(__FILE__)."/helper";
+		$files=glob($helperdir."/*.php");
+		foreach($files as $f)
+		{
+			require_once($f);
+		}
+	}
+	
 	public function initialize($params)
 	{
 		foreach($params as $k=>$v)
@@ -172,6 +184,7 @@ class ValueReplacerItemProcessor extends Magmi_ItemProcessor
 				$this->_rvals[$colname]=$params[$k];
 			}
 		}
+		$this->initHelpers();
 	}
 
 	//auto add columns if not set
