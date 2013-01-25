@@ -197,4 +197,9 @@ class ValueReplacerItemProcessor extends Magmi_ItemProcessor
 	{
 		return "Input Data Preprocessing";
 	}
+	
+	static public function getCompatibleEngines()
+	{
+		return ".*";	
+	}
 }

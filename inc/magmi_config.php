@@ -78,11 +78,11 @@ class ProfileBasedConfig extends DirbasedConfig
 {
 	private static $_script=__FILE__;
 	protected $_profile=null;
-	
+	protected $_cbasedir=null;
 	public function getProfileDir()
 	{
 		$subdir=($this->_profile=="default"?"":DS.$this->_profile);
-		$confdir=dirname(dirname(self::$_script)).DS."conf$subdir";
+		$confdir=dirname(dirname(self::$_script)).DS."conf".DS.$this->_cbasedir.$subdir;
 		if(!file_exists($confdir))
 		{
 			@mkdir($confdir,Magmi_Config::getInstance()->getDirMask());
@@ -90,9 +90,10 @@ class ProfileBasedConfig extends DirbasedConfig
 		return realpath($confdir);
 	}
 	
-	public function __construct($fname,$profile=null)
+	public function __construct($fname,$basedir,$profile=null)
 	{
 		$this->_profile=$profile;
+		$this->_cbasedir=$basedir;
 		parent::__construct($this->getProfileDir(),$fname);
 	}
 	
@@ -200,28 +201,16 @@ class Magmi_Config extends DirbasedConfig
 		return parent::save($arr);		
 	}
 	
-	public function getProfileList()
-	{
-		$proflist=array();
-		$candidates=scandir($this->getConfDir());
-		foreach($candidates as $candidate)
-		{
-			if(is_dir($this->getConfDir().DS.$candidate) && $candidate[0]!="." && substr($candidate,0,2)!="__")
-			{
-				$proflist[]=$candidate;
-			}
-		}
-		return $proflist;
-	}
+	
 	
 }
 
 class EnabledPlugins_Config extends ProfileBasedConfig
 {
 	
-	public function __construct($profile="default")
+	public function __construct($basedir,$profile="default")
 	{
-		parent::__construct("plugins.conf",$profile);
+		parent::__construct("plugins.conf",$basedir,$profile);
 	}
 	
 	public function getEnabledPluginFamilies($typelist)
