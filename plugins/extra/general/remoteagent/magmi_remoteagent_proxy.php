@@ -134,6 +134,17 @@ class Magmi_RemoteAgent_Proxy extends MagentoDirHandler
 		
 	}
 	
+	public function chmod($path,$mask)
+	{
+		$r=$this->doOperation('chmod',array('path'=>$path,'mask'=>$mask));
+		if($r->is_error)
+		{
+			$this->_lasterror=$r->error;
+		}
+		return !$r->is_error;
+			
+	}
+	
 	public function copy($srcpath, $destpath)
 	{
 		$r=$this->doOperation('copy',array('src'=>$srcpath,'dest'=>$destpath));

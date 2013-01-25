@@ -15,7 +15,7 @@ class FSHelper
 			}
 			return true;
 	 }
-	 
+
 }
 
 
@@ -221,9 +221,10 @@ abstract class MagentoDirHandler
 	}
 	public abstract function canhandle($url);
 	public abstract function file_exists($filepath);
-	public abstract function mkdir($path);
+	public abstract function mkdir($path,$mask,$rec);
 	public abstract function copy($srcpath,$destpath);
 	public abstract function unlink($filepath);
+	public abstract function chmod($filepath,$mask);
 }
 
 class LocalMagentoDirHandler extends MagentoDirHandler
@@ -246,7 +247,7 @@ class LocalMagentoDirHandler extends MagentoDirHandler
 		return file_exists($mp);
 	}
 	
-	public function mkdir($path,$mask=null)
+	public function mkdir($path,$mask=null,$rec=false)
 	{
 		$mp=str_replace("//","/",$this->_magdir."/".str_replace($this->_magdir, '', $path));
 		
@@ -254,7 +255,23 @@ class LocalMagentoDirHandler extends MagentoDirHandler
 		{
 			$mask=octdec('755');
 		}
-		$ok=@mkdir($mp,$mask);
+		$ok=@mkdir($mp,$mask,$rec);
+		if(!$ok)
+		{
+			$this->_lasterror=error_get_last();
+		}
+		return $ok;
+	}
+	
+	public function chmod($path,$mask)
+	{
+		$mp=str_replace("//","/",$this->_magdir."/".str_replace($this->_magdir, '', $path));
+		
+		if($mask==null)
+		{
+			$mask=octdec('755');
+		}
+		$ok=@chmod($mp,$mask);
 		if(!$ok)
 		{
 			$this->_lasterror=error_get_last();

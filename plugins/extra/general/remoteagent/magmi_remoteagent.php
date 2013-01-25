@@ -273,6 +273,21 @@ class LocalMagentoDirHandler extends MagentoDirHandler
 		return $ok;
 	}
 	
+	public function chmod($path,$mask)
+	{
+		$mp=str_replace("//","/",$this->_magdir."/".str_replace($this->_magdir, '', $path));
+		
+		if($mask==null)
+		{
+			$mask=octdec('755');
+		}
+		$ok=@chmod($mp,$mask);
+		if(!$ok)
+		{
+			$this->_lasterror=error_get_last();
+		}
+		return $ok;
+	}
 
 	
 	public function getLastError()
@@ -331,6 +346,7 @@ class Magmi_RemoteAgent
 	"getVersion"=>NULL,
 	"copy"=>array("src","dest"),
 	"mkdir"=>array("path","mask"),
+	"chmod"=>array("path","mask"),
 	"unlink"=>array("path"),
 	"file_exists"=>array("path"));
 	
@@ -341,7 +357,7 @@ class Magmi_RemoteAgent
 	
 	public static function getStaticVersion()
 	{
-		return "1.0.1";
+		return "1.0.3";
 	}
 	
 	public function wrapResult($res)
@@ -406,6 +422,17 @@ class Magmi_RemoteAgent
 			$this->_lasterror=$this->_mdh->getLastError();
 		}
 		return $this->wrapResult($ok);
+	}
+	
+	public function chmod($params)
+	{
+		$ok=$this->_mdh->chmod($params['path'],$params['mask']);
+		if(!$ok)
+		{
+			$this->_lasterror=$this->_mdh->getLastError();
+		}
+		return $this->wrapResult($ok);
+		
 	}
 	
 	public function unlink($params)
