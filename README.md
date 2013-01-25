@@ -19,6 +19,18 @@ For documentation and examples, read the wiki at
 
 ----
 
+**Multiple histories.**  
+The repository shows completely different histories for trunk and the 0.8 branch, even though they contain the same commits.  
+To avoid breaking the continued mirroring process, the issue can't be fixed by rewriting history.  
+As a workaround, to 'merge' both histories together in your local clone, some git replace refs are provided.  
+If you wish to fetch these refs, the refspec has to be explicitly added to the .git/config:  
+```bash
+$ git config --add remote.origin.fetch '+refs/replace/*:refs/replace/*'
+$ git pull
+```
+For more information about git replace, read on at [git-scm][].
+
+
 **The upstream Subversion repository has changed.**  
 Sadly it doesn't match the old one exactly, histories have diverged.
 There was no easy way to fix this, without giving people a headache with forced resets,
@@ -35,6 +47,7 @@ To summarize the changes:
 + __The new subversion trunk is named [**trunk**][ghtrunk]__.  
   I couldn't do the same fix for the 0.8 branch, the new 0.8 has completely different history.  
 + Point your old 0.8 branch to refs/heads/ **old-0.8** and rename it locally if you checked it out.
++ To force-update all tags to reference the new history, do `git pull --tags` once
 
 I am truly sorry for the mess,  
 -- nyov
@@ -46,6 +59,7 @@ Software is provided under the X11 (MIT) license.
 [sfproject]: http://sourceforge.net/projects/magmi/
 [dweeves]:   https://github.com/dweeves
 [wiki]:      http://sourceforge.net/apps/mediawiki/magmi/
+[git-scm]:   http://git-scm.com/2010/03/17/replace.html
 
 [ghtrunk]:   https://github.com/nyov/magmi/tree/trunk
 [oldsvn]:    https://github.com/nyov/magmi/tree/oldsvn
