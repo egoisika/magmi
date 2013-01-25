@@ -10,13 +10,13 @@ class TierpriceProcessor extends Magmi_ItemProcessor
 	protected $_tpcol=array();
     protected $_singlestore=0;
     protected $__pricescope=2;
-
+    
 	public function getPluginInfo()
 	{
 		return array(
             "name" => "Tier price importer",
             "author" => "Dweeves,bepixeld",
-            "version" => "0.0.8a",
+            "version" => "0.0.9a",
 			"url"=>"http://sourceforge.net/apps/mediawiki/magmi/index.php?title=Tier_price_importer"
             );
 	}
@@ -31,13 +31,13 @@ class TierpriceProcessor extends Magmi_ItemProcessor
 	 * 		false if you want to skip item import after your processing
 	 */
 
-
+    
 
 	public function processItemAfterId(&$item,$params=null)
 	{
-
+		
 		$pid=$params["product_id"];
-
+		
 		$tpn=$this->tablename("catalog_product_entity_tier_price");
 		$tpcol=array_intersect(array_keys($this->_tpcol),array_keys($item));
 		//do nothing if item has no tier price info or has not change
@@ -47,7 +47,19 @@ class TierpriceProcessor extends Magmi_ItemProcessor
 		}
 		else
 		{
-
+		
+		 //it seems that magento does not handle "per website" tier price on single store deployments , so force it to "default"
+		  //so we test wether we have single store deployment or not.
+		  //bepixeld patch : check pricescope from general config
+		  if($this->_singlestore==0 && $this->_pricescope!=0)
+		  {
+		    $wsids=$this->getItemWebsites($item);
+		  }
+		  else
+		  {
+		    $wsids=array(0);
+		  }
+		  $wsstr=$this->arr2values($wsids);
 			//clear all existing tier price info for existing customer groups in csv
 		   $cgids=array();
 			foreach($tpcol as $k)
@@ -62,30 +74,30 @@ class TierpriceProcessor extends Magmi_ItemProcessor
 					$cgids=array();
 					break;
 				}
-
+			
 			}
-
+			
 			//if we have specific customer groups
 			if(count($cgids)>0)
 			{
 				//delete only for thos customer groups
 				$instr=$this->arr2values($cgids);
-
+			
 				//clear tier prices for selected tier price columns
-				$sql="DELETE FROM $tpn WHERE entity_id=? AND customer_group_id IN ($instr)";
-				$this->delete($sql,array_merge(array($pid),$cgids));
+				$sql="DELETE FROM $tpn WHERE entity_id=? AND customer_group_id IN ($instr) AND website_id IN ($wsstr)";
+				$this->delete($sql,array_merge(array($pid),$cgids,$wsids));
 			}
 			else
 			{
 				//delete for all customer groups
-				$sql="DELETE FROM $tpn WHERE entity_id=?";
-				$this->delete($sql,$pid);
+				$sql="DELETE FROM $tpn WHERE entity_id=? AND website_id IN ($wsstr)";
+				$this->delete($sql,array_merge(array($pid),$wsids));
 			}
 		}
-
+		
 		foreach($tpcol as $k)
 		{
-
+		
 		//get tier price column info
 		  $tpinf=$this->_tpcol[$k];
 		  //now we've got a customer group id
@@ -95,23 +107,13 @@ class TierpriceProcessor extends Magmi_ItemProcessor
 			(entity_id,all_groups,customer_group_id,qty,value,website_id) VALUES ";
 		  $inserts=array();
 		  $data=array();
-		  //it seems that magento does not handle "per website" tier price on single store deployments , so force it to "default"
-		  //so we test wether we have single store deployment or not.
-		  //bepixeld patch : check pricescope from general config
-		  if($this->_singlestore==0 && $this->_pricescope!=0)
-		  {
-		    $wsids=$this->getItemWebsites($item);
-		  }
-		  else
-		  {
-		    $wsids=array(0);
-		  }
+		 
 		  if($item[$k]=="")
 		  {
 		  	continue;
 		  }
 		  $tpvals=explode(";",$item[$k]);
-
+		  
 		  foreach($wsids as $wsid)
 		  {
 		  		//for each tier price value definition
@@ -122,7 +124,7 @@ class TierpriceProcessor extends Magmi_ItemProcessor
 		  			//if we have only one item
 		  			if(count($tpvinf)==1)
 		  			{
-		  				//set qty to one
+		  				//set qty to one 
 		  				array_unshift($tpvinf,1.0);
 		  			}
 		  			//if more thant 1, qty first,price second
@@ -173,8 +175,8 @@ class TierpriceProcessor extends Magmi_ItemProcessor
 			if(preg_match("|tier_price:(.*)|",$col,$matches))
 			{
 				$tpinf=array("name"=>$matches[1],"id"=>null);
-
-				//if specific tier price
+				
+				//if specific tier price 
 		 		 if($tpinf["name"]!=="_all_")
 		 		 {
 		  			//get tier price customer group id
@@ -202,7 +204,7 @@ class TierpriceProcessor extends Magmi_ItemProcessor
 	 }
 	 //bepixeld patch : check pricescope from general config
 	 $sql = "SELECT value FROM ". $this->tablename('core_config_data') ." WHERE path=?";
-	 $this->_pricescope = intval($this->selectone($sql, array('catalog/price/scope'), 'value')); //0=global, 1=website
-
+	 $this->_pricescope = intval($this->selectone($sql, array('catalog/price/scope'), 'value')); //0=global, 1=website	  
+	 
 	}
 }

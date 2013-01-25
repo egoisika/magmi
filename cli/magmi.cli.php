@@ -9,7 +9,7 @@
  *
  */
 
-require_once("../inc/magmi_defs.php");
+require_once(dirname(dirname(__FILE__))."/inc/magmi_defs.php");
 
 $script=array_shift($argv);
 $options=array();
@@ -54,9 +54,10 @@ function getEngineInstance($options)
 	$engine_name=$engdef[0];
 	$engine_class=$engdef[1];
 	$enginst=null;
-	if(file_exists("../engines/$engine_name.php"))
+	$engfile=dirname(dirname(__FILE__))."/engines/$engine_name.php";
+	if(file_exists($engfile))
 	{
-		require_once("../engines/$engine_name.php");
+		require_once($engfile);
 		if(class_exists($engine_class))
 		{
 			$enginst=new $engine_class();
