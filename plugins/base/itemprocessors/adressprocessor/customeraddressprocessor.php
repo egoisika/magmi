@@ -8,7 +8,7 @@ class CustomerAdressProcessor extends Magmi_ItemProcessor
     protected $_caetype;
     protected $_countrycache=array();
     protected $_isomap=array();
-    
+
 	public function getPluginInfo()
     {
         return array(
@@ -17,7 +17,7 @@ class CustomerAdressProcessor extends Magmi_ItemProcessor
             "version" => "0.0.2",
         );
     }
-    
+
     public function initAdressAttrInfos($cols)
     {
     	$toscan=$cols;
