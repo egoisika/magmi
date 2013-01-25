@@ -114,7 +114,7 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
 		$httpCode = curl_getinfo($context, CURLINFO_HTTP_CODE);
 		$exists = ($httpCode==200);
 		/* retry on error */
-			
+
 		if($httpCode==503 or $httpCode==403)
 		{
 			/* wait for a half second */
@@ -318,7 +318,7 @@ class LocalMagentoDirHandler extends MagentoDirHandler
 		}
 		else
 		{
-				
+
 			$result=@copy($srcpath,$destpath);
 			if(!$result)
 			{

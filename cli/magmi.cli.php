@@ -57,7 +57,7 @@ function getClassInstance($cval,$cdir=".")
 		require_once($cfile);
 		if(class_exists($cclass))
 		{
-			$cinst=new $cclass();				
+			$cinst=new $cclass();
 		}
 	}
 	if($cinst==null)
@@ -65,7 +65,7 @@ function getClassInstance($cval,$cdir=".")
 	 die("Invalid class definition : ".$cval);
 	}
 	return $cinst;
-	
+
 }
 
 function getEngineInstance($options)

@@ -163,7 +163,7 @@ class ValueReplacerItemProcessor extends Magmi_ItemProcessor
 		}
 		return true;
 	}
-	
+
 	public function initHelpers()
 	{
 		$helperdir=dirname(__FILE__)."/helper";
@@ -173,7 +173,7 @@ class ValueReplacerItemProcessor extends Magmi_ItemProcessor
 			require_once($f);
 		}
 	}
-	
+
 	public function initialize($params)
 	{
 		foreach($params as $k=>$v)

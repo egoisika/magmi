@@ -2,25 +2,25 @@
 class ValueRemapper
 {
 	protected static $_inst;
-	
+
 	protected $_maps=array();
 	protected $_cimaps=array();
 	protected $_curmap=null;
-	
+
 	public function __construct()
 	{
-		
+
 	}
-	
+
 	static public function getInstance()
 	{
 		if(self::$_inst==null)
 		{
 			self::$_inst=new ValueRemapper();
-		}	
+		}
 		return self::$_inst;
 	}
-	
+
 	public static function use_csv($csv)
 	{
 		$inst=self::getInstance();
@@ -28,7 +28,7 @@ class ValueRemapper
 	    $inst->_curmap=$csv;
 		return $inst;
 	}
-	
+
 	public function map($val,$ci=false)
 	{
 		$tval=trim($val);
@@ -54,16 +54,16 @@ class ValueRemapper
 		for($i=0;$i<count($vals);$i++)
 		{
 			$vals[$i]=$this->map($vals[$i],$ci);
-		}	
+		}
 		return implode($sep,$vals);
 	}
-	
+
 	public function setMap($csv)
 	{
 		if(!isset($this->_maps[$csv]))
 		{
 			$this->_maps[$csv]=array();
-			$this->_cimaps[$csv]	=array();		
+			$this->_cimaps[$csv]	=array();
 			if(file_exists($csv))
 			{
 				$lines=file($csv);
@@ -74,8 +74,8 @@ class ValueRemapper
 					$this->_cimaps[$csv][strtoupper($kv[0])]=$kv[1];
 				}
 			}
-		}	
+		}
 	}
-	
-	
+
+
 }

@@ -58,7 +58,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 	 */
 	public function __construct()
 	{
-	
+
 		$this->setBuiltinPluginClasses("itemprocessors",dirname(dirname(__FILE__))."/plugins/inc/magmi_defaultattributehandler.php::Magmi_DefaultAttributeItemProcessor");
 	}
 
@@ -901,9 +901,9 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 		$ddata=array();
 		$cpos=array();
 		$catids=csl2arr($item["category_ids"]);
-		
+
 		//find positive category assignments
-		
+
 		foreach($catids as $catdef)
 		{
 			$a=explode("::",$catdef);
@@ -920,7 +920,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 				$cpos[]=$catpos;
 			}
 		}
-		
+
 		//get all "real ids"
 		$rcatids=$this->selectAll("SELECT cce.entity_id as id FROM $cce as cce WHERE cce.entity_id IN (".$this->arr2values($cdata).")",$cdata);
 		$vcatids=array();
@@ -935,13 +935,13 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 		{
 			$this->log('Invalid category ids found for sku '.$item['sku'].":".implode(",",$diff),"warning");
 		}
-		
+
 		$cdata=$vcatids;
 		if(count($cdata)==0)
 		{
 			$this->log('No valid categories found, skip category assingment for sku '.$item['sku'],"warning");
 		}
-		
+
 		#now we have verified ids
 		for($i=0;$i<count($cdata);$i++)
 		{
@@ -950,7 +950,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 				$data[]=$pid;
 				$data[]=$cpos[$i];
 		}
-			
+
 		#peform deletion of removed category affectation
 		if(count($ddata)>0)
 		{
@@ -959,9 +959,9 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 			$this->delete($sql,$ddata);
 			unset($ddata);
 		}
-		
-		
-		
+
+
+
 		#create new category assignment for products, if multi store with repeated ids
 		#ignore duplicates
 		if(count($inserts)>0)
@@ -1181,7 +1181,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 		{
 			return false;
 		}
-		
+
 		//check if sku has been reset
 		if(!isset($item["sku"]) || trim($item["sku"])=='')
 		{
@@ -1192,18 +1192,18 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 		$this->handleIgnore($item);
 		//get Item identifiers in magento
 		$itemids=$this->getItemIds($item);
-		
+
 		//extract product id & attribute set id
 		$pid=$itemids["pid"];
 		$asid=$itemids["asid"];
-		
+
 		$isnew=false;
 		if(isset($pid) && $this->mode=="xcreate")
 		{
 			$this->log("skipping existing sku:{$item["sku"]} - xcreate mode set","skip");
 			return false;
 		}
-		
+
 		if(!isset($pid))
 		{
 
@@ -1229,7 +1229,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 		{
 			$this->updateProduct($item,$pid);
 		}
-		
+
 		try
 		{
 			if(!$this->callPlugins("itemprocessors","processItemAfterId",$item,array("product_id"=>$pid,"new"=>$isnew,"same"=>$this->_same,"asid"=>$asid)))
@@ -1367,7 +1367,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 		//create an instance of local magento directory handler
 		//this instance will autoregister in factory
 		$mdh=new LocalMagentoDirHandler(Magmi_Config::getInstance()->getMagentoDir());
-		
+
 		$this->initPlugins($this->_profile);
 		$this->mode=$this->getParam($params,"mode","update");
 
@@ -1503,7 +1503,7 @@ class Magmi_ProductImportEngine extends Magmi_Engine
 
 	public function engineRun($params,$forcebuiltin=array())
 	{
-		
+
 		$this->log("Import Profile:$this->_profile","startup");
 		$this->log("Import Mode:$this->mode","startup");
 		$this->log("step:".$this->getProp("GLOBAL","step",0.5)."%","step");

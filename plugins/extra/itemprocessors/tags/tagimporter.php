@@ -10,7 +10,7 @@ class TagProcessor extends Magmi_ItemProcessor
 
 	protected $_useridcache=array();
 	protected $_tagidcache=array();
-	
+
 	public function 	getPluginInfo()
 	{
 		return array(
@@ -21,7 +21,7 @@ class TagProcessor extends Magmi_ItemProcessor
 			"url"=>$this->pluginDocUrl("Tag_importer")
             );
 	}
-	
+
 	public function createTag($taginfo)
 	{
 		$sql="INSERT INTO ".$this->tablename("tag")." (name,status) VALUES (?,?)
@@ -29,13 +29,13 @@ class TagProcessor extends Magmi_ItemProcessor
 		$tagid=$this->insert($sql,array($taginfo["name"],$taginfo["status"]));
 		return $tagid;
 	}
-	
+
 	public function getTagId($taginfo,$create=true)
 	{
 		//cache key = tag name + status
 		$tagid=null;
 		$ck=$taginfo["name"]."/".$taginfo["status"];
-		if(isset($this->_tagidcache[$ck]))	
+		if(isset($this->_tagidcache[$ck]))
 		{
 			$tagid=$this->_tagidcache[$ck];
 		}
@@ -49,7 +49,7 @@ class TagProcessor extends Magmi_ItemProcessor
 			{
 				$sql="SELECT id FROM ".$this->tablename["tag"]." WHERE name=?";
 				$tagid=$this->selectone($sql,$taginfo["name"],"id");
-				
+
 			}
 			//add to cache
 			$this->_tagidcache[$ck]=$tagid;
@@ -58,11 +58,11 @@ class TagProcessor extends Magmi_ItemProcessor
 			{
 				array_shift($this->_tagidcache);
 			}
-			
+
 		}
 		return $tagid;
 	}
-	
+
 	//clearing tags associated to item
 	public function clearItemTags($item,$pid,$sids)
 	{
@@ -70,7 +70,7 @@ class TagProcessor extends Magmi_ItemProcessor
 		$sql="DELETE FROM ".$this->tablename("tag_relation")." WHERE product_id=? AND store_id IN (".$this->arr2values($sids).")";
 		$this->delete($sql,array_merge(array($pid),$sids));
 	}
-	
+
 	//handleItemTags
 	public function handleItemTags($item,$pid,$sids,$addtags,$remtags,$hasrel)
 	{
@@ -92,13 +92,13 @@ class TagProcessor extends Magmi_ItemProcessor
 					$adata=array_merge($adata,array($tagid,$taginf["user"],$pid,$sid));
 				}
 			}
-			
+
 			if(count($ins)>0)
 			{
 				$sql="INSERT IGNORE INTO $tr (tag_id,customer_id,product_id,store_id) VALUES ".implode(",",$ins);
 				$this->insert($sql,$adata);
-			}		
-			
+			}
+
 			//iterate on tag removal
 			$tids=array();
 			$uids=array();
@@ -119,13 +119,13 @@ class TagProcessor extends Magmi_ItemProcessor
 				$this->delete($sql,array_merge($tids,$uids,$sids));
 			}
 	}
-	
+
 	public function endImport()
 	{
 		$this->log("Cleaning orphan tags","info");
 		$tr=$this->tablename("tag_relation");
 		$ta=$this->tablename("tag");
-		$sql="DELETE ta.* FROM $ta as ta 
+		$sql="DELETE ta.* FROM $ta as ta
 					LEFT JOIN $tr as tr ON tr.tag_id=ta.tag_id
 					WHERE tr.tag_id IS NULL";
 		$this->delete($sql);
@@ -134,7 +134,7 @@ class TagProcessor extends Magmi_ItemProcessor
 	public function getUserIdFromEmail($email,$default)
 	{
 		//check in cache
-		$ak=array_keys($this->_useridcache);	
+		$ak=array_keys($this->_useridcache);
 		if(in_array($email,$ak))
 		{
 			$id=$this->_useridcache[$email];
@@ -157,14 +157,14 @@ class TagProcessor extends Magmi_ItemProcessor
 		}
 		return $id;
 	}
-	
+
 	public function getUserId($userinf)
 	{
 		//if id provided , use it
 		$userid=is_int($userinf)?$userinf:$this->getUserIdFromEmail($userinf,0);
 		return $userid;
 	}
-	
+
 	public function parseTag($tag)
 	{
 		$taginfo=array("name"=>null,"status"=>1,"user"=>null);
@@ -189,7 +189,7 @@ class TagProcessor extends Magmi_ItemProcessor
 		if(!isset($item["tags"]))
 		{
 			return;
-		}	
+		}
 		$hasrel=false;
 		//tags separator is ,
 		$taglist=explode(",",$item["tags"]);
@@ -201,7 +201,7 @@ class TagProcessor extends Magmi_ItemProcessor
 				break;
 			}
 		}
-		
+
 		//iterate on tags
 		$addtags=array();
 		$remtags=array();
@@ -210,7 +210,7 @@ class TagProcessor extends Magmi_ItemProcessor
 			$tag=trim($tag);
 			$dir=getRelative($tag);
 			$taginfo=$this->parseTag($tag);
-			
+
 			if($dir=="+")
 			{
 				$addtags[]=$taginfo;
@@ -220,7 +220,7 @@ class TagProcessor extends Magmi_ItemProcessor
 				$remtags[]=$taginfo;
 			}
 		}
-		
+
 		$sids=$this->getItemStoreIds($item);
 		//we need a real store id , not admin so let's find one
 		if(count($sids)==1 && $sids[0]==0)
@@ -233,7 +233,7 @@ class TagProcessor extends Magmi_ItemProcessor
 			}
 		}
 		$pid=$params["product_id"];
-		
+
 		$this->handleItemTags($item,$pid,$sids,$addtags,$remtags,$hasrel);
 	}
 }

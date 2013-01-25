@@ -9,5 +9,5 @@ The agent will be used if magento base directory is remote ftp
 	<li class="value">
 		<input type="text" name="MRAGENT:baseurl" value="<?php echo $this->getParam("MRAGENT:baseurl","")?>">
 	</li>
-	
+
 </ul>

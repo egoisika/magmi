@@ -168,9 +168,9 @@ else{?>
 								<input type="checkbox" class="pl_<?php echo $k?>" name="<?php echo $pclass?>" <?php if($eplconf->isPluginEnabled($k,$pclass)){?>checked="checked"<?php }?>>
 							<?php } else {?>
 								<input type="checkbox" class="pl_<?php echo $k?>" name="<?php echo $pclass?>" disabled="disabled">
-							<?php }?>	
+							<?php }?>
 							<span class="pluginname <?php if(isset($pinfo['sponsorinfo'])){ ?> sponsored <?php } ?>" ><?php echo $pinfo["name"]." v".$pinfo["version"];?></span>
-							</div>	
+							</div>
 							<div class="plugininfo">
 								<span>info</span>
 								<div class="plugininfohover">
@@ -179,7 +179,7 @@ else{?>
 									<?php $sp=isset($pinfo["sponsorinfo"]);
 									 foreach($pinfo as $pik=>$piv)
 									{ ?>
-										
+
 										<li <?php if(isset($sp)){ ?> class='sponsored'<?php } ?>><?php
 											if($pik=="url")
 											{?>
@@ -188,7 +188,7 @@ else{?>
 											else
 											if($pik=="sponsorinfo")
 											{
-												
+
 												?>
 													<span class="sponsor">Sponsored By</span>:
 													<span>
@@ -205,9 +205,9 @@ else{?>
 											{
 											?>
 												<span><?php echo $pik?></span>:<span><?php echo $piv ?></span>
-											<?php 
+											<?php
 											}
-											
+
 										?>
 										</li>
 								<?php 	}

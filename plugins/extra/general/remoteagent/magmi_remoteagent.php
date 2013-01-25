@@ -28,20 +28,20 @@ class MRA_MagentoDirHandlerFactory
 {
 	protected $_handlers=array();
 	protected static $_instance;
-	
+
 	public function __construct()
 	{
 	}
-	
+
 	public static function getInstance()
 	{
 		if(!isset(self::$_instance))
 		{
 			self::$_instance=new MagentoDirHandlerFactory();
-		}	
+		}
 		return self::$_instance;
 	}
-	
+
 	public function registerHandler($obj)
 	{
 		$cls=get_class($obj);
@@ -50,19 +50,19 @@ class MRA_MagentoDirHandlerFactory
 			$this->_handlers[$cls]=$obj;
 		}
 	}
-	
+
 	public function getHandler($url)
 	{
 		foreach($this->_handlers as $cls=>$handler)
 		{
 			if ($handler->canHandle($url))
-			{	
+			{
 				return $handler;
 			}
 		}
-	
+
 	}
-	
+
 }
 
 abstract class MRA_RemoteFileGetter
@@ -73,7 +73,7 @@ abstract class MRA_RemoteFileGetter
  	public function getErrors()
  	{
  		return $this->_errors;
- 	}	
+ 	}
 }
 
 class MRA_CURL_RemoteFileGetter extends RemoteFileGetter
@@ -90,7 +90,7 @@ class MRA_CURL_RemoteFileGetter extends RemoteFileGetter
 		}
 		return $this->_curlh;
 	}
-	
+
 	public function destroyContext($url)
 	{
 		if($this->_curlh!=NULL)
@@ -99,7 +99,7 @@ class MRA_CURL_RemoteFileGetter extends RemoteFileGetter
 			$this->_curlh=NULL;
 		}
 	}
-	
+
 
 	public function urlExists($remoteurl)
 	{
@@ -107,8 +107,8 @@ class MRA_CURL_RemoteFileGetter extends RemoteFileGetter
 		//optimized lookup through curl
 			/* head */
 			curl_setopt($context,  CURLOPT_HEADER, TRUE);
-			curl_setopt( $context, CURLOPT_RETURNTRANSFER, true ); 
-			curl_setopt( $context, CURLOPT_CUSTOMREQUEST, 'HEAD' ); 
+			curl_setopt( $context, CURLOPT_RETURNTRANSFER, true );
+			curl_setopt( $context, CURLOPT_CUSTOMREQUEST, 'HEAD' );
 			curl_setopt( $context, CURLOPT_NOBODY, true );
 
 			/* Get the HTML or whatever is linked in $url. */
@@ -118,7 +118,7 @@ class MRA_CURL_RemoteFileGetter extends RemoteFileGetter
 			$httpCode = curl_getinfo($context, CURLINFO_HTTP_CODE);
 			$exists = ($httpCode==200);
 			/* retry on error */
-			
+
 			if($httpCode==503 or $httpCode==403)
 			{
 				/* wait for a half second */
@@ -129,7 +129,7 @@ class MRA_CURL_RemoteFileGetter extends RemoteFileGetter
 			}
 			return $exists;
 		}
-		
+
 		public function copyRemoteFile($url,$dest)
 		{
 			$this->_errors=array();
@@ -137,14 +137,14 @@ class MRA_CURL_RemoteFileGetter extends RemoteFileGetter
 		$context=$this->createContext($url);
 		if(!$this->urlExists($url))
 		{
-			$this->_errors=array("type"=>"download error","message"=>"URL $url is unreachable");	
+			$this->_errors=array("type"=>"download error","message"=>"URL $url is unreachable");
 			return false;
 		}
 		$fp=fopen($dest,"w");
 		//add support for https urls
 		curl_setopt($context, CURLOPT_SSL_VERIFYPEER ,false);
 		curl_setopt($context, CURLOPT_RETURNTRANSFER, false);
-		curl_setopt( $context, CURLOPT_CUSTOMREQUEST, 'GET' ); 
+		curl_setopt( $context, CURLOPT_CUSTOMREQUEST, 'GET' );
 		curl_setopt( $context, CURLOPT_NOBODY, false);
 		curl_setopt($context, CURLOPT_FILE, $fp);
 		curl_setopt($context, CURLOPT_HEADER, 0);
@@ -157,7 +157,7 @@ class MRA_CURL_RemoteFileGetter extends RemoteFileGetter
 		if(curl_getinfo($context,CURLINFO_HTTP_CODE)>=400)
 		{
 			$this->_errors=array("type"=>"download error","message"=>curl_error($context));
-			$ret=false;	
+			$ret=false;
 		}
 		fclose($fp);
 		return $ret;
@@ -177,7 +177,7 @@ class MRA_URLFopen_RemoteFileGetter extends RemoteFileGetter
 		}
 		unset($h);
 	}
-	
+
 	public function copyRemoteFile($url,$dest)
 	{
 		if(!$this->urlExists($url))
@@ -185,7 +185,7 @@ class MRA_URLFopen_RemoteFileGetter extends RemoteFileGetter
 			$this->_errors=array("type"=>"target error","message"=>"URL $remoteurl is unreachable");
 			return false;
 		}
-		
+
 		$ok=@copy($url,$dest);
 		if(!$ok)
 		{
@@ -197,7 +197,7 @@ class MRA_URLFopen_RemoteFileGetter extends RemoteFileGetter
 
 class MRA_RemoteFileGetterFactory
 {
-	
+
 	public static function getFGInstance()
 	{
 		$fginst=NULL;
@@ -211,7 +211,7 @@ class MRA_RemoteFileGetterFactory
 		}
 		return $fginst;
 	}
-		
+
 }
 
 abstract class MRA_MagentoDirHandler
@@ -239,23 +239,23 @@ class MRA_LocalMagentoDirHandler extends MRA_MagentoDirHandler
 		parent::__construct($magdir);
 		MRA_MagentoDirHandlerFactory::getInstance()->registerHandler($this);
 	}
-	
+
 	public function canHandle($url)
 	{
 		return (preg_match("|^.*?://.*$|",$url)==false);
 	}
-	
+
 	public function file_exists($filename)
 	{
 		$mp=str_replace("//","/",$this->_magdir."/".str_replace($this->_magdir, '', $filename));
-	
+
 		return file_exists($mp);
 	}
-	
+
 	public function mkdir($path,$mask=null,$rec=false)
 	{
 		$mp=str_replace("//","/",$this->_magdir."/".str_replace($this->_magdir, '', $path));
-		
+
 		if($mask==null)
 		{
 			$mask=octdec('755');
@@ -267,11 +267,11 @@ class MRA_LocalMagentoDirHandler extends MRA_MagentoDirHandler
 		}
 		return $ok;
 	}
-	
+
 	public function chmod($path,$mask)
 	{
 		$mp=str_replace("//","/",$this->_magdir."/".str_replace($this->_magdir, '', $path));
-		
+
 		if($mask==null)
 		{
 			$mask=octdec('755');
@@ -283,18 +283,18 @@ class MRA_LocalMagentoDirHandler extends MRA_MagentoDirHandler
 		}
 		return $ok;
 	}
-	
+
 	public function getLastError()
 	{
 		return $this->_lasterror;
 	}
-	
+
 	public function unlink($path)
 	{
 			$mp=str_replace("//","/",$this->_magdir."/".str_replace($this->_magdir, '', $path));
 			return @unlink($mp);
 	}
-	
+
 	public function copyFromRemote($remoteurl,$destpath)
 	{
 		$rfg=RemoteFileGetterFactory::getFGInstance();
@@ -306,15 +306,15 @@ class MRA_LocalMagentoDirHandler extends MRA_MagentoDirHandler
 		}
 		unset($rfg);
 		return $ok;
-	}	
-	
+	}
+
 	public function copy($srcpath,$destpath)
 	{
 		$result=false;
 		if(preg_match('|^.*?://.*$|', $srcpath))
 		{
 			$result=$this->copyFromRemote($srcpath,$destpath);
-		}	
+		}
 		else
 		{
 			$result=@copy($srcpath,$destpath);
@@ -325,7 +325,7 @@ class MRA_LocalMagentoDirHandler extends MRA_MagentoDirHandler
 		}
 		return $result;
 	}
-	
+
 	public function exec_cmd($cmd,$params)
 	{
 		$mp=str_replace("//","/",$this->_magdir."/".str_replace($this->_magdir, '', $cmd));
@@ -341,12 +341,12 @@ class MRA_LocalMagentoDirHandler extends MRA_MagentoDirHandler
 
 
 
-class Magmi_RemoteAgent 
+class Magmi_RemoteAgent
 {
 	private static $_instance;
 	private $_mdh;
 	private $_lasterror;
-	
+
 	public static $apidesc=array(
 	"getVersion"=>NULL,
 	"copy"=>array("src","dest"),
@@ -355,17 +355,17 @@ class Magmi_RemoteAgent
 	"unlink"=>array("path"),
 	"file_exists"=>array("path"),
 	"exec_cmd"=>array("cmd","args"));
-	
+
 	public function __construct()
 	{
-		$this->_mdh=new MRA_LocalMagentoDirHandler(dirname(__FILE__));	
+		$this->_mdh=new MRA_LocalMagentoDirHandler(dirname(__FILE__));
 	}
-	
+
 	public static function getStaticVersion()
 	{
 		return "1.0.2";
 	}
-	
+
 	public function wrapResult($res)
 	{
 		if($this->_lasterror==NULL)
@@ -381,7 +381,7 @@ class Magmi_RemoteAgent
 	{
 		return $this->wrapResult(array("version"=>self::getStaticVersion()));
 	}
-	
+
 	public static function checkParams($params,$api)
 	{
 		$missing=array();
@@ -395,14 +395,14 @@ class Magmi_RemoteAgent
 		}
 		return $missing;
 	}
-	
+
 	public function getLastError()
 	{
 		$err=$this->_lasterror;
 		$this->_lasterror=NULL;
 		return $err;
 	}
-	
+
 	public function copy($params)
 	{
 		$ok=$this->_mdh->copy($params['src'],$params['dest']);
@@ -418,7 +418,7 @@ class Magmi_RemoteAgent
 		$ok=$this->_mdh->file_exists($params['path']);
 		return $this->wrapResult($ok);
 	}
-	
+
 	public function mkdir($params)
 	{
 		$rec=isset($params['rec']);
@@ -429,7 +429,7 @@ class Magmi_RemoteAgent
 		}
 		return $this->wrapResult($ok);
 	}
-	
+
 	public function chmod($params)
 	{
 		$ok=$this->_mdh->chmod($params['path'],$params['mask']);
@@ -438,28 +438,28 @@ class Magmi_RemoteAgent
 			$this->_lasterror=$this->_mdh->getLastError();
 		}
 		return $this->wrapResult($ok);
-		
+
 	}
-	
+
 	public function unlink($params)
 	{
 		$ok=$this->_mdh->unlink($params['path']);
 		if(!$ok)
 		{
-			$this->_lasterror=$this->_mdh->getLastError();	
+			$this->_lasterror=$this->_mdh->getLastError();
 		}
 		return $this->wrapResult($ok);
 	}
-	
+
 	public static function getInstance()
 	{
 		if(!isset(self::$_instance))
 		{
 			self::$_instance=new Magmi_RemoteAgent();
-		}	
+		}
 		return self::$_instance;
 	}
-	
+
 	public function exec_cmd($params)
 	{
 		$out=$this->_mdh->exec_cmd($params['cmd'],$params['args']);

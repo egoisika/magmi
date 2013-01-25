@@ -112,7 +112,7 @@ function truepath($path){
     $path=!$unipath ? '/'.$path : $path;
     return $path;
 }
- 
+
 
 function isabspath($path)
 {

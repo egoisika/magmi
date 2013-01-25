@@ -67,7 +67,7 @@ class Magmi_CSVDataSource extends Magmi_Datasource
 	{
 
 	}
-	
+
   public function getRemoteFile($url,$creds=null,$authmode=null,$cookies=null)
   {
 	$ch = curl_init($url);
@@ -124,8 +124,8 @@ class Magmi_CSVDataSource extends Magmi_Datasource
 			$dl_opts=array(CURLOPT_FILE=>$fp);
 		}
 	}
-	
-	
+
+
 	if($creds!="")
 	{
 	if($lookup!=0)
@@ -138,7 +138,7 @@ class Magmi_CSVDataSource extends Magmi_Datasource
 	   $lookup_opts[CURLOPT_USERPWD]="$creds";
 	}
 
-	
+
 	if(substr($url,0,4)=="http")
 	{
 		$dl_opts[CURLOPT_HTTPAUTH]=CURLAUTH_ANY;
@@ -146,7 +146,7 @@ class Magmi_CSVDataSource extends Magmi_Datasource
 	}
 	$dl_opts[CURLOPT_USERPWD]="$creds";
 	}
-	
+
 	if($cookies)
 	{
 		if($lookup!=0)
@@ -156,13 +156,13 @@ class Magmi_CSVDataSource extends Magmi_Datasource
 				$lookup_opts[CURLOPT_COOKIE]=$cookies;
 			}
 		}
-		
+
 		if(substr($url,0,4)=="http")
 		{
 				$dl_opts[CURLOPT_COOKIE]=$cookies;
 		}
 	}
-	
+
 	if($lookup)
 	{
 		//lookup , using HEAD request
@@ -232,7 +232,7 @@ class Magmi_CSVDataSource extends Magmi_Datasource
 			{
 				$user=$this->getParam("CSV:remoteuser");
 				$pass=$this->getParam("CSV:remotepass");
-				
+
 				$authmode=$this->getParam("CSV:authmode");
 				$creds="$user:$pass";
 			}

@@ -24,7 +24,7 @@ ul.formline li
 	margin-left:0px;
 	float:left;
 	list-style: none;
-	
+
 }
 ul.formline li.label
 {
@@ -161,7 +161,7 @@ div.title
 {
 	border:1px solid #ccccff;
 		background:#eeeeff;
-	
+
 	text-decoration: none;
 	font-size: small;
 }
@@ -169,7 +169,7 @@ div.title
 {
 	border:1px solid #8888cc;
 	background:#ccccff;
-	
+
 }
 
 .error
@@ -200,7 +200,7 @@ span.version
 	font-weight: normal;
 	padding-top:2px;
 	padding-bottom:2px;
-	
+
 }
 
 .log_standard
@@ -209,7 +209,7 @@ span.version
 	font-weight: normal;
 	padding-top:2px;
 	padding-bottom:2px;
-	
+
 }
 
 .log_indexing
@@ -222,7 +222,7 @@ span.version
 	font-weight: normal;
 	padding-top:2px;
 	padding-bottom:2px;
-	
+
 }
 
 .log_warning
@@ -235,7 +235,7 @@ span.version
 	font-weight: normal;
 	padding-top:2px;
 	padding-bottom:2px;
-	
+
 }
 
 /*.log_itime,.log_dbtime
@@ -259,7 +259,7 @@ span.version
 	font-weight: normal;
 	padding-top:2px;
 	padding-bottom:2px;
-	
+
 }
 .log_end span
 {
@@ -294,7 +294,7 @@ span.version
   margin-top:10px;
   line-height: 1.4em;
   border:1px solid #cccccc;
-  
+
 }
 
 .import_params h2
@@ -302,7 +302,7 @@ span.version
 	background-color: #cccccc;
 	line-height: 1.4em;
 }
-	
+
 .import_running h2
 {
 	line-height: 1.4em;
@@ -409,7 +409,7 @@ div.plugininfo
 	text-align: center;
 }
 
-div.plugininfo:hover 
+div.plugininfo:hover
 {
 background-color:#ccffcc;
 }
@@ -444,7 +444,7 @@ div.plugininfo:hover div.plugininfohover
 
 div.plugindata .ul
 {
-	
+
 }
 div.plugindata .minidoc
 {
@@ -576,7 +576,7 @@ div.trace
 }
 #directrun ul.formline li.label
 {
- width:200px;	
+ width:200px;
 }
 
 ul#globstep input[type=text]
@@ -640,7 +640,7 @@ border-top:1px solid #cccccc;
 margin-bottom:5px;
 clear:both;
 }
-.pluginrun_results 
+.pluginrun_results
 {
 	border:1px solid #0000cc;
 }
@@ -656,7 +656,7 @@ p.logentry
 {
  background-color:#0000cc;
  color:#ffffff;
-} 
+}
 
 #overlay {
      position: absolute;
@@ -701,5 +701,5 @@ div.changedesc
  margin-top:5px;
  padding-top:5px;
  padding-bottom:5px;
-	
+
 }
