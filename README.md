@@ -1,4 +1,10 @@
-This is [Magmi][sfproject], the Magento Mass Importer, by [dweeves][dweeves]
+This is [Magmi][sfproject], the Magento Mass Importer, by [dweeves]
+
+----
+
+**Magmi is now on git(hub)! Great news, head on over to [magmi-git] for your master branch.**  
+SVN seems discontinued, so no updates here (maybe a final cleanup to merge/rewrite all histories).  
+Thanks, [dweeves]!
 
 ----
 
@@ -49,15 +55,13 @@ To summarize the changes:
 + Point your old 0.8 branch to refs/heads/ **old-0.8** and rename it locally if you checked it out.
 + To force-update all tags to reference the new history, do `git pull --tags` once
 
-I am truly sorry for the mess,  
--- nyov
-
 ----
 
 Software is provided under the X11 (MIT) license.
 
 [sfproject]: http://sourceforge.net/projects/magmi/
 [dweeves]:   https://github.com/dweeves
+[magmi-git]: https://github.com/dweeves/magmi-git
 [wiki]:      http://sourceforge.net/apps/mediawiki/magmi/
 [git-scm]:   http://git-scm.com/2010/03/17/replace.html
 
